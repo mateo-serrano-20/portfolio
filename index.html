@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manuel Mateo Serrano | Portfolio</title>
+<meta name="description" content="Portfolio de Manuel Mateo Serrano, estudiante de Ingeniería en Sistemas en la UTN FRC. Proyectos, experiencia y contacto.">
+<meta property="og:title" content="Manuel Mateo Serrano | Portfolio">
+<meta property="og:description" content="Estudiante de Ingeniería en Sistemas en la UTN FRC. Proyectos, experiencia y contacto.">
+<meta property="og:type" content="website">
+<style>html, body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: el taller queda fijo de fondo; el scroll mueve la cámara y en cada parada aparece una fila de tarjetas abajo */
+:root {
+  --night: #15110e;      /* fondo: negro cálido del taller */
+  --card: rgba(26, 20, 16, 0.82);
+  --line: rgba(243, 233, 220, 0.16);
+  --ink: #f3e9dc;        /* texto principal */
+  --muted: #b9a895;      /* texto secundario */
+  --lamp: #f2a541;       /* acento: luz de la lámpara */
+  --steel: #9cc0d4;      /* secundario: LED frío del tablero */
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gut: max(16px, env(safe-area-inset-left, 0px));
+  --gut-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: dark;
+}
+html, body { background: var(--night); color: var(--ink); }
+body { font-family: var(--body); font-size: 16px; line-height: 1.5; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--lamp); outline-offset: 3px; border-radius: 4px; }
+
+/* ---------- Escena: foto HD abajo, video encima solo en la portada ---------- */
+.stage { position: relative; overflow: hidden; background: var(--night); }
+.world { position: relative; aspect-ratio: 16 / 9; transform-origin: 0 0; will-change: transform; }
+.world img, .world video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; user-select: none; }
+.vignette { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(21, 17, 14, 0.9), rgba(21, 17, 14, 0.35) 38%, rgba(21, 17, 14, 0) 60%),
+              radial-gradient(ellipse at 50% 40%, rgba(21, 17, 14, 0) 50%, rgba(21, 17, 14, 0.7) 100%); }
+.shade { position: absolute; inset: 0; pointer-events: none; background: var(--night); opacity: 0; }
+
+/* ---------- Escenas de contenido ---------- */
+.scenes { display: grid; gap: 56px; padding-block: 40px 64px; padding-left: var(--gut); padding-right: var(--gut-r); }
+.scene { display: grid; gap: 16px; }
+.head h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.2rem, 4.2vw, 3.4rem); line-height: 0.92; margin: 0; text-shadow: 0 3px 24px rgba(0, 0, 0, 0.7); text-wrap: balance; }
+.head p { margin: 8px 0 0; max-width: 38rem; color: var(--ink); text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9); }
+
+/* Portada */
+.hero h1 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(3rem, 8.5vw, 6.5rem); line-height: 0.88; margin: 0 0 14px; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6); text-wrap: balance; }
+.hero h1 span { color: var(--lamp); }
+.hero p { font-size: 1.12rem; max-width: 30rem; margin: 0; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.85); }
+.hint { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); margin-top: 20px; display: inline-flex; gap: 10px; }
+.hint i { font-style: normal; display: inline-block; animation: bob 1.8s ease-in-out infinite; }
+
+/* Tarjetas */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 12px; }
+.cards.two { max-width: 46rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); min-width: 0; }
+.card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--steel); }
+.status { color: var(--lamp); white-space: nowrap; }
+.card h3 { margin: 0; font-size: 1.08rem; font-weight: 600; line-height: 1.2; }
+.card p { margin: 0; font-size: 0.86rem; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 4px; }
+.chips span { font-family: var(--mono); font-size: 0.66rem; border: 1px solid var(--line); border-radius: 3px; padding: 2px 6px; color: var(--ink); }
+
+/* Tarjetas de contacto: toda la tarjeta es el link */
+.contact-card { position: relative; transition: border-color 0.2s, transform 0.2s; }
+.contact-card:hover, .contact-card:focus-within { border-color: var(--lamp); transform: translateY(-2px); }
+.contact-card a { text-decoration: none; font-size: 1rem; font-weight: 500; overflow-wrap: anywhere; }
+.contact-card a::after { content: ""; position: absolute; inset: 0; }
+.contact-card .go { color: var(--lamp); }
+/* Íconos de cada app (Font Awesome), con el color de cada marca */
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand svg, .brand i { font-size: 1.6rem; width: 1em; height: 1em; }
+.brand.wa svg { color: #25d366; }
+.brand.li svg { color: #0a66c2; background: #fff; border-radius: 3px; }
+.brand.gm svg { color: var(--lamp); }
+.copy { position: relative; z-index: 1; align-self: flex-start; font: inherit; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 3px; padding: 3px 8px; cursor: pointer; }
+.copy:hover { color: var(--lamp); border-color: var(--lamp); }
+
+/* Navegación del recorrido */
+.rail { display: none; }
+
+@keyframes bob { 50% { transform: translateY(4px); } }
+
+/* ---------- Modo cine (con GSAP y sin movimiento reducido) ---------- */
+.cine body { overflow-x: hidden; }
+.cine .stage { position: fixed; inset: 0; z-index: 0; }
+.cine .world { position: absolute; left: 0; top: 0; }
+.cine .scenes { position: fixed; inset: 0; z-index: 2; display: block; padding: 0; pointer-events: none; }
+.cine .scene { position: absolute; left: max(40px, calc(env(safe-area-inset-left, 0px) + 40px)); right: max(72px, calc(env(safe-area-inset-right, 0px) + 72px)); bottom: max(5vh, calc(env(safe-area-inset-bottom, 0px) + 24px)); pointer-events: auto; }
+.cine .hero { bottom: 12vh; right: auto; max-width: 44rem; }
+.cine .track { position: relative; z-index: 1; }
+.cine .rail { display: flex; position: fixed; z-index: 3; right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)); top: 50%; translate: 0 -50%; flex-direction: column; gap: 6px; }
+.rail button { display: flex; align-items: center; justify-content: flex-end; gap: 10px; background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--muted); font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.rail button span { opacity: 0; transition: opacity 0.25s; }
+.rail button::after { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--muted); transition: background 0.25s, border-color 0.25s, transform 0.25s; }
+.rail:hover button span, .rail button[aria-current="true"] span { opacity: 1; }
+.rail button[aria-current="true"] { color: var(--ink); }
+.rail button[aria-current="true"]::after { background: var(--lamp); border-color: var(--lamp); transform: scale(1.3); }
+
+/* Celular: tarjetas en fila deslizable de costado */
+@media (max-width: 760px) {
+  .cine .scene { left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom, 0px)); }
+  .cine .scene .head { padding-left: var(--gut); padding-right: var(--gut-r); }
+  .cine .hero { left: var(--gut); right: var(--gut-r); bottom: 10vh; }
+  .cine .cards { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--gut-r) 4px var(--gut); scrollbar-width: none; }
+  .cine .cards::-webkit-scrollbar { display: none; }
+  .cine .card { flex: 0 0 80%; scroll-snap-align: center; }
+  .cine .rail { top: max(14px, env(safe-area-inset-top, 0px)); right: 50%; translate: 50% 0; flex-direction: row; gap: 12px; }
+  .rail button span { display: none; }
+}
+
+/* Sin modo cine: página común con todo visible */
+html:not(.cine) .scenes { max-width: 60rem; margin: 0 auto; }
+html:not(.cine) .hero { margin-top: -8rem; position: relative; }
+</style>
+
+</head>
+<body>
+<div class="stage" aria-hidden="true">
+  <div class="world" id="world">
+    <img src="taller.webp" alt="" width="2576" height="1438">
+    <video id="bg" src="taller.mp4" poster="poster.webp" muted loop playsinline preload="auto"></video>
+  </div>
+  <div class="shade" id="shade"></div>
+  <div class="vignette"></div>
+</div>
+
+<main class="scenes" id="scenes">
+  <!-- Portada -->
+  <section class="scene hero" id="s0" aria-labelledby="t0">
+    <h1 id="t0">Manuel Mateo <span>Serrano</span></h1>
+    <p>Estudiante de Ingeniería en Sistemas en la UTN Facultad Regional Córdoba. Programo, armo computadoras y me gustan los fierros.</p>
+    <div class="hint">Bajá para recorrer el taller <i>↓</i></div>
+  </section>
+
+  <!-- Escritorio: proyectos de la facultad -->
+  <section class="scene" id="s1" aria-labelledby="t1">
+    <div class="head">
+      <h2 id="t1">Proyectos de la facultad</h2>
+      <p>Trabajos en equipo de la UTN, con metodología ágil.</p>
+    </div>
+    <div class="cards two">
+      <article class="card">
+        <div class="top"><span>Seminario Integrador</span><span class="status">En desarrollo</span></div>
+        <h3>EnFoco</h3>
+        <p>Sistema para organizar producciones audiovisuales: escenas, jornadas de rodaje, recursos y tareas. Soy Scrum Master y desarrollador full-stack en un equipo de cinco.</p>
+        <div class="chips"><span>Java 21</span><span>Spring Boot</span><span>PostgreSQL</span><span>Docker</span><span>Jira</span></div>
+      </article>
+      <article class="card">
+        <div class="top"><span>Materia Backend</span><span class="status">En desarrollo</span></div>
+        <h3>CheckSport</h3>
+        <p>Gestión de competencias deportivas: carreras individuales, resultados, ranking y carga masiva por CSV. Trabajo grupal de cinco, programado sin IA.</p>
+        <div class="chips"><span>Java</span><span>API REST</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Mesa de hardware: proyectos personales -->
+  <section class="scene" id="s2" aria-labelledby="t2">
+    <div class="head">
+      <h2 id="t2">Proyectos personales</h2>
+      <p>Lo que armo por mi cuenta, del código al hardware.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="top"><span>E-commerce</span><span class="status">MVP funcional</span></div>
+        <h3>Puebla Taller de Arte</h3>
+        <p>Tienda online para un local de cerámica y regalería: catálogo con filtros, carrito, pedidos y un panel para que la dueña cargue productos y stock.</p>
+        <div class="chips"><span>React</span><span>Express</span><span>Sequelize</span><span>PostgreSQL</span></div>
+      </article>
+      <article class="card">
+        <div class="top"><span>App de hábitos</span><span class="status">Backend listo</span></div>
+        <h3>Perfil del Héroe</h3>
+        <p>Registra hábitos y metas como un juego de rol: la experiencia sube de nivel y un jardín crece con el progreso. API con login JWT y 33 tests.</p>
+        <div class="chips"><span>Node.js</span><span>Express</span><span>PostgreSQL</span><span>Jest</span></div>
+      </article>
+      <article class="card">
+        <div class="top"><span>Asistente de voz</span><span class="status">Prototipo</span></div>
+        <h3>Tuerca</h3>
+        <p>Asistente para la PC con acento cordobés: se despierta cuando lo llamás, entiende lo que le decís y responde con voz y un personaje animado.</p>
+        <div class="chips"><span>Python</span><span>PyQt6</span><span>Vosk</span><span>LLM</span></div>
+      </article>
+      <article class="card">
+        <div class="top"><span>Emprendimiento</span><span class="status">Hardware</span></div>
+        <h3>Reparación de PCs</h3>
+        <p>Armado, reparación y mantenimiento de computadoras para clientes particulares.</p>
+        <div class="chips"><span>Diagnóstico</span><span>Armado</span><span>Mantenimiento</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Pizarra: experiencia laboral -->
+  <section class="scene" id="s3" aria-labelledby="t3x">
+    <div class="head">
+      <h2 id="t3x">Experiencia</h2>
+      <p>Trabajos que hice antes de dedicarme a sistemas.</p>
+    </div>
+    <div class="cards two">
+      <article class="card">
+        <div class="top"><span>Rolfiren · Agencia de autos y motos</span><span class="status">2022</span></div>
+        <h3>Vendedor y Referente de Ventas</h3>
+        <p>Asesoramiento y seguimiento de clientes. Me ascendieron a referente: armé, capacité y coordiné un equipo de 7 vendedores.</p>
+        <div class="chips"><span>Liderazgo</span><span>Atención al cliente</span><span>Ventas</span></div>
+      </article>
+      <article class="card">
+        <div class="top"><span>Taller propio · Autónomo</span><span class="status">2020 – 2024</span></div>
+        <h3>Herrero</h3>
+        <p>Trabajos de herrería para la municipalidad y clientes particulares.</p>
+        <div class="chips"><span>Gestión propia</span><span>Resolución de problemas</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Auto: sobre mí y formación -->
+  <section class="scene" id="s4" aria-labelledby="t3">
+    <div class="head">
+      <h2 id="t3">Sobre mí</h2>
+      <p>Estoy en 3er año de Ingeniería en Sistemas y busco una pasantía o mi primer trabajo en sistemas, en desarrollo o soporte IT.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="top"><span>Carrera</span><span class="status">En curso</span></div>
+        <h3>Ingeniería en Sistemas de Información</h3>
+        <p>UTN Facultad Regional Córdoba · 3er año</p>
+      </article>
+      <article class="card">
+        <div class="top"><span>Título</span></div>
+        <h3>Técnico en Programación</h3>
+        <p>Instituto Técnico La Falda</p>
+      </article>
+      <article class="card">
+        <div class="top"><span>Cursos · UTN.BA virtual</span><span class="status">Certificados</span></div>
+        <h3>Node.js</h3>
+        <h3>Armado y reparación de computadoras</h3>
+      </article>
+      <article class="card">
+        <div class="top"><span>Herramientas</span></div>
+        <div class="chips"><span>Java</span><span>Spring Boot</span><span>JavaScript</span><span>React</span><span>Node.js</span><span>Express</span><span>PostgreSQL</span><span>SQL</span><span>Python</span><span>Docker</span><span>Git</span><span>Scrum</span></div>
+        <p>Español nativo · Inglés básico</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section class="scene" id="s5" aria-labelledby="t4">
+    <div class="head">
+      <h2 id="t4">Hablemos</h2>
+      <p>Manuel Mateo Serrano · <span id="edad">23</span> años · Córdoba, Argentina</p>
+    </div>
+    <div class="cards">
+      <article class="card contact-card">
+        <div class="top"><span class="brand wa"><i class="fa-brands fa-whatsapp"></i>WhatsApp</span><span class="go">↗</span></div>
+        <a href="https://wa.me/5493548434280?text=Hola%20Mateo%2C%20vi%20tu%20portfolio" target="_blank" rel="noopener">+54 9 3548 43-4280</a>
+        <button class="copy" type="button" data-copy="+5493548434280">Copiar número</button>
+      </article>
+      <article class="card contact-card">
+        <div class="top"><span class="brand li"><i class="fa-brands fa-linkedin"></i>LinkedIn</span><span class="go">↗</span></div>
+        <a href="https://www.linkedin.com/in/manuel-mateo-serrano" target="_blank" rel="noopener">/in/manuel-mateo-serrano</a>
+      </article>
+      <article class="card contact-card">
+        <div class="top"><span class="brand gm"><i class="fa-solid fa-envelope"></i>Mail</span><span class="go">↗</span></div>
+        <a href="mailto:mateo123serranomanuel@gmail.com">mateo123serranomanuel@gmail.com</a>
+        <button class="copy" type="button" data-copy="mateo123serranomanuel@gmail.com">Copiar mail</button>
+      </article>
+    </div>
+  </section>
+</main>
+
+<nav class="rail" id="rail" aria-label="Recorrido del taller"></nav>
+<div class="track" id="track"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- Íconos de WhatsApp, LinkedIn y mail -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/brands.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/fontawesome.min.js"></script>
+<script>
+// Botones de copiar (teléfono y mail)
+document.querySelectorAll('.copy').forEach((btn) => btn.addEventListener('click', async () => {
+  const label = btn.textContent;
+  try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Copiado'; }
+  catch { btn.textContent = btn.dataset.copy; }
+  setTimeout(() => { btn.textContent = label; }, 1800);
+}));
+
+// Edad calculada desde la fecha de nacimiento (cumple el 17 de febrero)
+(() => {
+  const hoy = new Date(), nac = new Date(2003, 1, 17);
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
+  document.getElementById('edad').textContent = edad;
+})();
+
+// Video de fondo: solo si no se pidió menos movimiento
+const bg = document.getElementById('bg');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reduce) bg.remove(); else bg.play().catch(() => {});
+
+(() => {
+  if (reduce || !window.gsap || !window.ScrollTrigger) return; // queda la página común
+  gsap.registerPlugin(ScrollTrigger);
+  document.documentElement.classList.add('cine');
+
+  // Paradas de la cámara: x/y = punto del taller (0 a 1), z = zoom,
+  // ox/oy = dónde queda ese punto en pantalla (arriba, para dejar lugar a las tarjetas)
+  const SHOTS = [
+    { name: 'Inicio',      x: 0.50, y: 0.50, z: 1.00, ox: 0.50, oy: 0.50 },
+    { name: 'Facultad',    x: 0.27, y: 0.53, z: 1.80, ox: 0.50, oy: 0.34 },
+    { name: 'Personales',  x: 0.80, y: 0.54, z: 1.90, ox: 0.50, oy: 0.34 },
+    { name: 'Experiencia', x: 0.45, y: 0.41, z: 2.00, ox: 0.50, oy: 0.32 },
+    { name: 'Sobre mí',    x: 0.62, y: 0.50, z: 2.00, ox: 0.50, oy: 0.34 },
+    { name: 'Contacto',    x: 0.50, y: 0.48, z: 1.08, ox: 0.50, oy: 0.40 },
+  ];
+  const IW = 1280, IH = 720; // proporción de la escena (16:9)
+  const world = document.getElementById('world');
+  const scenes = SHOTS.map((_, i) => document.getElementById('s' + i));
+  const cam = { ...SHOTS[0] };
+  let W = 0, H = 0;
+
+  // Tamaño "cover" de la escena según la ventana
+  function size() {
+    const vw = innerWidth, vh = innerHeight, r = IW / IH;
+    if (vw / vh > r) { W = vw; H = vw / r; } else { H = vh; W = vh * r; }
+    world.style.width = W + 'px';
+    world.style.height = H + 'px';
+    render();
+  }
+
+  // Lleva el punto (x, y) del taller a (ox, oy) de la pantalla, sin mostrar bordes
+  function render() {
+    const vw = innerWidth, vh = innerHeight;
+    const z = vw <= 760 ? 1 + (cam.z - 1) * 0.55 : cam.z;
+    const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    const X = clamp(cam.ox * vw - z * cam.x * W, vw - z * W, 0);
+    const Y = clamp(cam.oy * vh - z * cam.y * H, vh - z * H, 0);
+    world.style.transform = `translate3d(${X}px, ${Y}px, 0) scale(${z})`;
+  }
+
+  // Línea de tiempo: viaje de cámara + pausa con las tarjetas visibles
+  gsap.set(scenes.slice(1), { autoAlpha: 0, y: 30 });
+  const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
+  tl.addLabel('s0').to({}, { duration: 0.5 });
+  SHOTS.forEach((shot, i) => {
+    if (i === 0) return;
+    tl.to(scenes[i - 1], { autoAlpha: 0, y: -16, duration: 0.25, ease: 'power1.in' })
+      .to(cam, { x: shot.x, y: shot.y, z: shot.z, ox: shot.ox, oy: shot.oy, duration: 1, onUpdate: render }, '<');
+    tl.to('#shade', { opacity: i === SHOTS.length - 1 ? 0.45 : 0.12, duration: 1 }, '<')
+      .to(scenes[i], { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.2')
+      .addLabel('s' + i)
+      .to({}, { duration: i === SHOTS.length - 1 ? 0.2 : 0.8 });
+  });
+
+  // Largo del scroll según la duración de la línea de tiempo
+  const track = document.getElementById('track');
+  track.style.height = (tl.duration() * 85 + 100) + 'vh';
+  const st = ScrollTrigger.create({
+    trigger: track, start: 'top top', end: 'bottom bottom', animation: tl, scrub: 0.9,
+    // inertia: false para que un salto (clic en la navegación) no se pase de parada
+    snap: { snapTo: 'labels', inertia: false, duration: { min: 0.3, max: 0.9 }, delay: 0.08, ease: 'power1.inOut' },
+  });
+  // Marca la parada activa según dónde está la animación (no el scroll), así no queda atrasada
+  tl.eventCallback('onUpdate', () => markRail());
+
+  // Puntos de navegación: uno por parada
+  const rail = document.getElementById('rail');
+  const buttons = SHOTS.map((shot, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = `<span>${shot.name}</span>`;
+    b.setAttribute('aria-label', 'Ir a ' + shot.name);
+    b.addEventListener('click', () => scrollTo({ top: st.labelToScroll('s' + i), behavior: 'smooth' }));
+    rail.appendChild(b);
+    return b;
+  });
+  function markRail() {
+    const t = tl.time();
+    let current = 0;
+    SHOTS.forEach((_, i) => { if (t >= tl.labels['s' + i] - 0.5) current = i; });
+    buttons.forEach((b, i) => b.setAttribute('aria-current', i === current ? 'true' : 'false'));
+  }
+
+  // Teclado: flechas y PageUp/PageDown saltan de parada en parada
+  addEventListener('keydown', (e) => {
+    const keys = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
+    if (!(e.key in keys)) return;
+    e.preventDefault();
+    const cur = buttons.findIndex((b) => b.getAttribute('aria-current') === 'true');
+    const next = Math.min(SHOTS.length - 1, Math.max(0, cur + keys[e.key]));
+    scrollTo({ top: st.labelToScroll('s' + next), behavior: 'smooth' });
+  });
+
+  addEventListener('resize', () => { size(); ScrollTrigger.refresh(); });
+  size();
+  markRail();
+})();
+</script>
+
+</body>
+</html>
