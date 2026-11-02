@@ -85,6 +85,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--lamp); outline-
 /* Navegación del recorrido */
 .rail { display: none; }
 
+/* Botón fijo para descargar el CV (abajo a la derecha, en Inicio y Hablemos) */
+.cv-btn { position: fixed; z-index: 4; right: max(20px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 20px));
+  display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: var(--lamp); color: var(--night);
+  font-weight: 600; font-size: 0.95rem; text-decoration: none; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45); transition: opacity 0.3s, visibility 0.3s, transform 0.2s; }
+.cv-btn:hover { transform: translateY(-2px); }
+.cv-btn svg, .cv-btn i { width: 1.1em; height: 1.1em; }
+.cine .cv-btn.off { opacity: 0; visibility: hidden; pointer-events: none; }
+.cine #s5 { right: max(250px, calc(env(safe-area-inset-right, 0px) + 250px)); }
+
 @keyframes bob { 50% { transform: translateY(4px); } }
 
 /* ---------- Modo cine (con GSAP y sin movimiento reducido) ---------- */
@@ -113,6 +122,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--lamp); outline-
   .cine .card { flex: 0 0 80%; scroll-snap-align: center; }
   .cine .rail { top: max(14px, env(safe-area-inset-top, 0px)); right: 50%; translate: 50% 0; flex-direction: row; gap: 12px; }
   .rail button span { display: none; }
+  .cine #s5 { right: 0; bottom: calc(max(14px, env(safe-area-inset-bottom, 0px)) + 64px); }
 }
 
 /* Sin modo cine: página común con todo visible */
@@ -273,6 +283,7 @@ html:not(.cine) .hero { margin-top: -8rem; position: relative; }
 </main>
 
 <nav class="rail" id="rail" aria-label="Recorrido del taller"></nav>
+<a class="cv-btn" id="cvBtn" href="cv.pdf" download="CV-Manuel-Mateo-Serrano.pdf"><i class="fa-solid fa-file-arrow-down"></i>Descargar CV</a>
 <div class="track" id="track"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -298,6 +309,10 @@ document.querySelectorAll('.copy').forEach((btn) => btn.addEventListener('click'
   document.getElementById('edad').textContent = edad;
 })();
 
+// Botón del CV: se oculta si todavía no está subido el archivo cv.pdf
+const cvBtn = document.getElementById('cvBtn');
+fetch('cv.pdf', { method: 'HEAD' }).then((r) => { if (!r.ok) cvBtn.hidden = true; }).catch(() => { cvBtn.hidden = true; });
+
 // Video de fondo: solo si no se pidió menos movimiento
 const bg = document.getElementById('bg');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -317,10 +332,12 @@ if (reduce) bg.remove(); else bg.play().catch(() => {});
     { name: 'Experiencia', x: 0.45, y: 0.41, z: 2.00, ox: 0.50, oy: 0.32 },
     { name: 'Sobre mí',    x: 0.62, y: 0.50, z: 2.00, ox: 0.50, oy: 0.34 },
     { name: 'Contacto',    x: 0.50, y: 0.48, z: 1.08, ox: 0.50, oy: 0.40 },
+    // Copia de la portada: al llegar acá se vuelve arriba sin que se note
+    { name: 'Inicio',      x: 0.50, y: 0.50, z: 1.00, ox: 0.50, oy: 0.50, clone: true },
   ];
   const IW = 1280, IH = 720; // proporción de la escena (16:9)
   const world = document.getElementById('world');
-  const scenes = SHOTS.map((_, i) => document.getElementById('s' + i));
+  const scenes = SHOTS.map((s, i) => document.getElementById('s' + (s.clone ? 0 : i)));
   const cam = { ...SHOTS[0] };
   let W = 0, H = 0;
 
@@ -344,17 +361,17 @@ if (reduce) bg.remove(); else bg.play().catch(() => {});
   }
 
   // Línea de tiempo: viaje de cámara + pausa con las tarjetas visibles
-  gsap.set(scenes.slice(1), { autoAlpha: 0, y: 30 });
+  gsap.set(scenes.slice(1, -1), { autoAlpha: 0, y: 30 });
   const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
   tl.addLabel('s0').to({}, { duration: 0.5 });
   SHOTS.forEach((shot, i) => {
     if (i === 0) return;
     tl.to(scenes[i - 1], { autoAlpha: 0, y: -16, duration: 0.25, ease: 'power1.in' })
       .to(cam, { x: shot.x, y: shot.y, z: shot.z, ox: shot.ox, oy: shot.oy, duration: 1, onUpdate: render }, '<');
-    tl.to('#shade', { opacity: i === SHOTS.length - 1 ? 0.45 : 0.12, duration: 1 }, '<')
+    tl.to('#shade', { opacity: shot.clone ? 0 : shot.name === 'Contacto' ? 0.45 : 0.12, duration: 1 }, '<')
       .to(scenes[i], { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.2')
       .addLabel('s' + i)
-      .to({}, { duration: i === SHOTS.length - 1 ? 0.2 : 0.8 });
+      .to({}, { duration: shot.clone ? 0.01 : 0.8 });
   });
 
   // Largo del scroll según la duración de la línea de tiempo
@@ -365,12 +382,26 @@ if (reduce) bg.remove(); else bg.play().catch(() => {});
     // inertia: false para que un salto (clic en la navegación) no se pase de parada
     snap: { snapTo: 'labels', inertia: false, duration: { min: 0.3, max: 0.9 }, delay: 0.08, ease: 'power1.inOut' },
   });
-  // Marca la parada activa según dónde está la animación (no el scroll), así no queda atrasada
-  tl.eventCallback('onUpdate', () => markRail());
+  // Marca la parada activa según la animación y, al llegar a la copia de la portada,
+  // vuelve arriba al instante (se ve igual, así que no se nota el salto)
+  let looping = false;
+  tl.eventCallback('onUpdate', () => {
+    markRail();
+    if (looping || tl.progress() < 0.999) return;
+    looping = true;
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      ScrollTrigger.update();
+      const tw = st.getTween();
+      if (tw) tw.progress(1);
+      tl.progress(0);
+      looping = false;
+    });
+  });
 
   // Puntos de navegación: uno por parada
   const rail = document.getElementById('rail');
-  const buttons = SHOTS.map((shot, i) => {
+  const buttons = SHOTS.filter((s) => !s.clone).map((shot, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.innerHTML = `<span>${shot.name}</span>`;
@@ -382,8 +413,10 @@ if (reduce) bg.remove(); else bg.play().catch(() => {});
   function markRail() {
     const t = tl.time();
     let current = 0;
-    SHOTS.forEach((_, i) => { if (t >= tl.labels['s' + i] - 0.5) current = i; });
+    SHOTS.forEach((s, i) => { if (t >= tl.labels['s' + i] - 0.5) current = s.clone ? 0 : i; });
     buttons.forEach((b, i) => b.setAttribute('aria-current', i === current ? 'true' : 'false'));
+    // El botón del CV solo se ve en Inicio y en Hablemos
+    cvBtn.classList.toggle('off', !(current === 0 || SHOTS[current].name === 'Contacto'));
   }
 
   // Teclado: flechas y PageUp/PageDown saltan de parada en parada
