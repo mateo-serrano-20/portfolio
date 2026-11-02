@@ -283,7 +283,7 @@ html:not(.cine) .hero { margin-top: -8rem; position: relative; }
 </main>
 
 <nav class="rail" id="rail" aria-label="Recorrido del taller"></nav>
-<a class="cv-btn" id="cvBtn" href="cv.pdf" download="CV-Manuel-Mateo-Serrano.pdf"><i class="fa-solid fa-file-arrow-down"></i>Descargar CV</a>
+<a class="cv-btn" id="cvBtn" href="CV_Manuel_Mateo_Serrano.pdf" download="CV_Manuel_Mateo_Serrano.pdf"><i class="fa-solid fa-file-arrow-down"></i>Descargar CV</a>
 <div class="track" id="track"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -309,9 +309,9 @@ document.querySelectorAll('.copy').forEach((btn) => btn.addEventListener('click'
   document.getElementById('edad').textContent = edad;
 })();
 
-// Botón del CV: se oculta si todavía no está subido el archivo cv.pdf
+// Botón del CV: se oculta si todavía no está subido el PDF del CV
 const cvBtn = document.getElementById('cvBtn');
-fetch('cv.pdf', { method: 'HEAD' }).then((r) => { if (!r.ok) cvBtn.hidden = true; }).catch(() => { cvBtn.hidden = true; });
+fetch('CV_Manuel_Mateo_Serrano.pdf', { method: 'HEAD' }).then((r) => { if (!r.ok) cvBtn.hidden = true; }).catch(() => { cvBtn.hidden = true; });
 
 // Video de fondo: solo si no se pidió menos movimiento
 const bg = document.getElementById('bg');

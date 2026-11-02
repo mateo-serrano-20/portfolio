@@ -1,0 +1,10 @@
+{
+  "headers": [
+    {
+      "source": "/CV_Manuel_Mateo_Serrano.pdf",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"CV_Manuel_Mateo_Serrano.pdf\"" }
+      ]
+    }
+  ]
+}
