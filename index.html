@@ -4,10 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Manuel Mateo Serrano | Portfolio</title>
-<meta name="description" content="Portfolio de Manuel Mateo Serrano, estudiante de Ingeniería en Sistemas en la UTN FRC. Proyectos, experiencia y contacto.">
+<meta name="description" content="Portfolio de Manuel Mateo Serrano. Estudiante de Ingeniería en Sistemas en la UTN FRC. Proyectos, experiencia y contacto.">
+<link rel="canonical" href="https://serranomanuelmateo.vercel.app/">
+<!-- Vista previa al compartir (LinkedIn, WhatsApp, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://serranomanuelmateo.vercel.app/">
 <meta property="og:title" content="Manuel Mateo Serrano | Portfolio">
 <meta property="og:description" content="Estudiante de Ingeniería en Sistemas en la UTN FRC. Proyectos, experiencia y contacto.">
-<meta property="og:type" content="website">
+<meta property="og:image" content="https://serranomanuelmateo.vercel.app/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://serranomanuelmateo.vercel.app/og.jpg">
+<!-- Estadísticas de visitas de Vercel (se activan desde el panel del proyecto) -->
+<script defer src="/_vercel/insights/script.js"></script>
 <style>html, body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,9 +112,19 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--lamp); outline-
 .cine .stage { position: fixed; inset: 0; z-index: 0; }
 .cine .world { position: absolute; left: 0; top: 0; }
 .cine .scenes { position: fixed; inset: 0; z-index: 2; display: block; padding: 0; pointer-events: none; }
-.cine .scene { position: absolute; left: max(40px, calc(env(safe-area-inset-left, 0px) + 40px)); right: max(72px, calc(env(safe-area-inset-right, 0px) + 72px)); bottom: max(5vh, calc(env(safe-area-inset-bottom, 0px) + 24px)); pointer-events: auto; }
+.cine .scene { position: absolute; left: max(40px, calc(env(safe-area-inset-left, 0px) + 40px)); right: max(72px, calc(env(safe-area-inset-right, 0px) + 72px)); bottom: max(5vh, calc(env(safe-area-inset-bottom, 0px) + 24px)); pointer-events: none; }
+/* Solo lo que se toca recibe el mouse; el resto deja pasar el puntero al taller (para el gato) */
+.cine .scene .cards, .cine .scene a, .cine .scene button { pointer-events: auto; }
 .cine .hero { bottom: 12vh; right: auto; max-width: 44rem; }
-.cine .track { position: relative; z-index: 1; }
+.cine .track { position: relative; z-index: 1; pointer-events: none; }
+.cine .stage { pointer-events: auto; }
+
+/* Detalle del gato: al pasar el mouse (o tocarlo) le salen "z" de dormido */
+.cat-spot { position: absolute; left: 50.5%; top: 60%; width: 12%; height: 11%; }
+.zz { position: absolute; left: 52.4%; top: 60.5%; pointer-events: none; font-family: var(--display); font-weight: 800;
+  color: var(--ink); text-shadow: 0 0 0.4em rgba(242, 165, 65, 0.7); opacity: 0; }
+@keyframes zz { 0% { opacity: 0; transform: translate(0, 0) scale(0.6) rotate(-8deg); } 20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(1.6em, -3.2em) scale(1.25) rotate(10deg); } }
 .cine .rail { display: flex; position: fixed; z-index: 3; right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)); top: 50%; translate: 0 -50%; flex-direction: column; gap: 6px; }
 .rail button { display: flex; align-items: center; justify-content: flex-end; gap: 10px; background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--muted); font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .rail button span { opacity: 0; transition: opacity 0.25s; }
@@ -135,7 +156,8 @@ html:not(.cine) .hero { margin-top: -8rem; position: relative; }
 <div class="stage" aria-hidden="true">
   <div class="world" id="world">
     <img src="taller.webp" alt="" width="2576" height="1438">
-    <video id="bg" src="taller.mp4" poster="poster.webp" muted loop playsinline preload="auto"></video>
+    <video id="bg" poster="poster.webp" muted loop playsinline preload="auto" data-hd="taller.mp4" data-sd="taller_720.mp4"></video>
+    <div class="cat-spot" id="catSpot"></div>
   </div>
   <div class="shade" id="shade"></div>
   <div class="vignette"></div>
@@ -196,12 +218,6 @@ html:not(.cine) .hero { margin-top: -8rem; position: relative; }
         <p>Asistente para la PC con acento cordobés: se despierta cuando lo llamás, entiende lo que le decís y responde con voz y un personaje animado.</p>
         <div class="chips"><span>Python</span><span>PyQt6</span><span>Vosk</span><span>LLM</span></div>
       </article>
-      <article class="card">
-        <div class="top"><span>Emprendimiento</span><span class="status">Hardware</span></div>
-        <h3>Reparación de PCs</h3>
-        <p>Armado, reparación y mantenimiento de computadoras para clientes particulares.</p>
-        <div class="chips"><span>Diagnóstico</span><span>Armado</span><span>Mantenimiento</span></div>
-      </article>
     </div>
   </section>
 
@@ -209,9 +225,15 @@ html:not(.cine) .hero { margin-top: -8rem; position: relative; }
   <section class="scene" id="s3" aria-labelledby="t3x">
     <div class="head">
       <h2 id="t3x">Experiencia</h2>
-      <p>Trabajos que hice antes de dedicarme a sistemas.</p>
+      <p>Soporte técnico, ventas y trabajos independientes.</p>
     </div>
-    <div class="cards two">
+    <div class="cards">
+      <article class="card">
+        <div class="top"><span>Emprendimiento propio</span><span class="status">Soporte técnico</span></div>
+        <h3>Técnico en reparación de computadoras</h3>
+        <p>Armado, diagnóstico, reparación y mantenimiento de PCs y notebooks, incluido el reemplazo de componentes. Instalación de Windows, Linux y programas.</p>
+        <div class="chips"><span>Hardware</span><span>Windows</span><span>Linux</span><span>Atención al cliente</span></div>
+      </article>
       <article class="card">
         <div class="top"><span>Rolfiren · Agencia de autos y motos</span><span class="status">2022</span></div>
         <h3>Vendedor y Referente de Ventas</h3>
@@ -316,7 +338,33 @@ fetch('CV_Manuel_Mateo_Serrano.pdf', { method: 'HEAD' }).then((r) => { if (!r.ok
 // Video de fondo: solo si no se pidió menos movimiento
 const bg = document.getElementById('bg');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (reduce) bg.remove(); else bg.play().catch(() => {});
+// En pantallas chicas usa la versión 720p (más liviana para datos móviles)
+if (reduce) bg.remove();
+else {
+  bg.src = matchMedia('(max-width: 900px)').matches ? bg.dataset.sd : bg.dataset.hd;
+  bg.play().catch(() => {});
+}
+
+// Gato: tres "z" que flotan cuando pasás el mouse o lo tocás
+const catSpot = document.getElementById('catSpot');
+let zzBusy = false;
+function zzz() {
+  if (zzBusy || reduce) return;
+  zzBusy = true;
+  ['z', 'z', 'Z'].forEach((ch, i) => {
+    const z = document.createElement('span');
+    z.className = 'zz';
+    z.textContent = ch;
+    z.style.fontSize = (1.5 + i * 0.45) + 'em';
+    z.style.marginLeft = (i * 0.5) + 'em';
+    z.style.animation = `zz 2.2s ease-out ${i * 0.45}s forwards`;
+    catSpot.parentNode.appendChild(z);
+    z.addEventListener('animationend', () => z.remove());
+  });
+  setTimeout(() => { zzBusy = false; }, 3200);
+}
+catSpot.addEventListener('mouseenter', zzz);
+catSpot.addEventListener('click', zzz);
 
 (() => {
   if (reduce || !window.gsap || !window.ScrollTrigger) return; // queda la página común
@@ -347,6 +395,7 @@ if (reduce) bg.remove(); else bg.play().catch(() => {});
     if (vw / vh > r) { W = vw; H = vw / r; } else { H = vh; W = vh * r; }
     world.style.width = W + 'px';
     world.style.height = H + 'px';
+    world.style.fontSize = (W / 100) + 'px';   // unidad para las "z" del gato, escala con el taller
     render();
   }
 
